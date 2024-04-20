@@ -14,14 +14,14 @@ import java.util.LinkedList;
 public class DbServiceImplementation implements DbService {
     private final Connection connection;
 
-    public DbServiceImplementation(String url) {
+    public DbServiceImplementation() {
         final String configPath = "src/main/resources/db/config/dbConfig.xml";
         try {
             XML config = new XMLDocument(new File(configPath));
             connection = DriverManager.getConnection(
-                    url,
-                    config.xpath("//db/username/text()").get(0),
-                    config.xpath("//db/password/text()").get(0)
+                    System.getProperty("jdbcUrl"),
+                    config.xpath("//app/db/username/text()").get(0),
+                    config.xpath("//app/db/password/text()").get(0)
             );
         } catch (SQLException | IOException e) {
             throw new RuntimeException(e);
@@ -41,7 +41,7 @@ public class DbServiceImplementation implements DbService {
         try {
             statement = this.connection.createStatement();
             queryResult = statement.executeQuery(query);
-            return getFromResultSet(queryResult);
+            return getPatientsListFromResultSet(queryResult);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
@@ -51,7 +51,7 @@ public class DbServiceImplementation implements DbService {
         }
     }
 
-    private LinkedList<Patient> getFromResultSet(ResultSet result) throws SQLException {
+    private LinkedList<Patient> getPatientsListFromResultSet(ResultSet result) throws SQLException {
         LinkedList<Patient> patients = new LinkedList<>();
         while (result.next()) {
             patients.add(getPatientFromResultSet(result));

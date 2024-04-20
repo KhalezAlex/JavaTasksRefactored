@@ -2,7 +2,7 @@ package com.example.javatasksref.ui;
 
 import com.example.javatasksref.db.DbService;
 import com.example.javatasksref.db.DbServiceImplementation;
-import com.example.javatasksref.util.CustomCellFactory;
+import com.example.javatasksref.util.customCellFactory.CustomCellFactory;
 import com.example.javatasksref.entity.Patient;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -15,11 +15,6 @@ import java.sql.SQLException;
 import java.util.*;
 
 public class TableViewPatient extends TableView<Patient> {
-    private String dbUrl = "jdbc:postgresql://localhost:5432/etalon";
-
-    public void setDbUrl(String dbUrl) {
-        this.dbUrl = dbUrl;
-    }
 
     public TableViewPatient() throws ClassNotFoundException {
         super();
@@ -69,7 +64,7 @@ public class TableViewPatient extends TableView<Patient> {
     }
 
     private ObservableList<Patient> getOl() {
-        DbService dbService = new DbServiceImplementation(dbUrl);
+        DbService dbService = new DbServiceImplementation();
         try {
             return FXCollections.observableArrayList(dbService.all());
         } catch (SQLException e) {

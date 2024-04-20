@@ -1,6 +1,5 @@
 package com.example.javatasksref;
 
-import com.example.javatasksref.ui.TableViewPatient;
 import com.jcabi.xml.XML;
 import com.jcabi.xml.XMLDocument;
 import javafx.application.Application;
@@ -17,6 +16,20 @@ public class JavaTasks extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
+        setJdbcUrlProperty();
+        stageInit(stage);
+    }
+
+    private void stageInit(Stage stage) throws IOException {
+        Scene scene = sceneInit();
+
+        stage.setTitle("JAVATASKS");
+        stage.setScene(scene);
+
+        stage.show();
+    }
+
+    private Scene sceneInit() throws IOException {
         XML config = new XMLDocument(new File(CONFIG));
         FXMLLoader fxmlLoader = new FXMLLoader(getClass()
                 .getResource(config
@@ -25,7 +38,7 @@ public class JavaTasks extends Application {
                 )
         );
 
-        String dbUrl = getParameters().getRaw().get(1).replace(":", "/");
+
         Scene scene = new Scene(fxmlLoader.load());
         scene
                 .getStylesheets()
@@ -35,13 +48,17 @@ public class JavaTasks extends Application {
                                         .xpath("//app/resources/main-view/css/text()")
                                         .get(0)))
                         .toExternalForm());
-        stage.setTitle("JAVATASKS");
-        stage.setScene(scene);
+        return scene;
+    }
 
-        MainViewController controller = fxmlLoader.getController();
-        controller.setDbUrl(dbUrl);
-
-        stage.show();
+    private void setJdbcUrlProperty() {
+        String prefix = "jdbc:postgresql://";
+        String jdbcUrl = prefix
+                .concat(getParameters()
+                        .getRaw()
+                        .get(1)
+                        .replace(":e", "/e"));
+        System.setProperty("jdbcUrl", jdbcUrl);
     }
 
     public static void main(String[] args) {

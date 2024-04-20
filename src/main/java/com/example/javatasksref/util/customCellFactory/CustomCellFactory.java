@@ -1,4 +1,4 @@
-package com.example.javatasksref.util;
+package com.example.javatasksref.util.customCellFactory;
 
 import com.example.javatasksref.entity.Patient;
 import javafx.beans.binding.Bindings;

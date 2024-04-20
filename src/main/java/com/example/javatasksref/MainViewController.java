@@ -27,12 +27,6 @@ public class MainViewController {
     @FXML
     public PaneTable paneTable;
 
-    private String dbUrl;
-
-    public void setDbUrl(String dbUrl) {
-        this.dbUrl = dbUrl;
-    }
-
     public void buttonSearchClickHandler() {
         if (textAreaQuery.getText().equals("")) {
             return;
@@ -43,8 +37,8 @@ public class MainViewController {
 
     private ObservableList<Patient> getSelection(String queryStr) {
         QueryWizard qw = new QueryWizard(queryStr);
-        DbService dbService = new DbServiceImplementation(dbUrl);
-        ObservableList<Patient> temp = null;
+        DbService dbService = new DbServiceImplementation();
+        ObservableList<Patient> temp;
         try {
             temp = FXCollections.observableArrayList(dbService.byQuery(qw.getQuery()));
         } catch (SQLException e) {
@@ -64,7 +58,7 @@ public class MainViewController {
     }
 
     public void cancelButtonClickHandler() {
-        DbService dbService = new DbServiceImplementation(dbUrl);
+        DbService dbService = new DbServiceImplementation();
         try {
             updateTable(FXCollections.observableArrayList(dbService.all()));
         } catch (SQLException e) {
