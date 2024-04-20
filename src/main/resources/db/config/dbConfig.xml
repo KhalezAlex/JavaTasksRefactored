@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+
+<app>
+    <db>
+        <username>postgres</username>
+        <password>ItsMyLife0203</password>
+        <driver>org.postgresql.Driver</driver>
+    </db>
+
+    <resources>
+        <main-view>
+            <css>/com/example/javatasksref/styles/main-view.css</css>
+            <xml>main-view.fxml</xml>
+        </main-view>
+    </resources>
+</app>
