@@ -8,24 +8,24 @@ import java.util.regex.Pattern;
 import static com.example.javatasksref.util.PatientAdapter.getDateSQLFormat;
 
 public class QueryWizard {
-    // список значений, по которым будет проводиться поиск
-    private List<String> predList;
-    private StringBuilder query = new StringBuilder("SELECT fio, birth_date, sex, num, smo, snils, " +
-            "policy, fin_source FROM java_tasks_patient WHERE ");
+    private static List<String> predList;
+    private static StringBuilder query;
 
-    public QueryWizard(String predicate) {
-        predList = Arrays.asList(predicate.split(" "));
-        predList = predList
-                .stream()
-                .filter(p -> p.length() <= 256)
-                .toList();
-        completeQuery();
-        query = new StringBuilder(query.substring(0, query.length() - 4)).append(";");
+    private static void flushQuery() {
+        query = new StringBuilder("SELECT fio, birth_date, sex, num, smo, snils, " +
+                "policy, fin_source FROM java_tasks_patient WHERE ");
     }
 
+    private static void flushPredList(String queryParams) {
+        predList = Arrays.asList(queryParams.split(" "));
+        predList = predList
+                .stream()
+                .filter(p -> p.length() <= 256 && !p.isEmpty())
+                .toList();
+    }
 
     // методы для сбора строки поиска
-    private void completeQuery() {
+    private static void completeQuery() {
         putNumSearchList();
         putSnilsSearchList();
         putSexSearchList();
@@ -34,9 +34,10 @@ public class QueryWizard {
         putBirthDateSearchList();
         putAgeSearchList();
         putFinSourceSearchList();
+        query = new StringBuilder(query.substring(0, query.length() - 4)).append(";");
     }
 
-    private void putNumSearchList() {
+    private static void putNumSearchList() {
         predList
                 .stream()
                 .filter(num ->
@@ -50,7 +51,7 @@ public class QueryWizard {
                         addIntPartCondition("num", num, 6));
     }
 
-    private void putSnilsSearchList() {
+    private static void putSnilsSearchList() {
         predList
                 .stream()
                 .filter(snils ->
@@ -62,10 +63,12 @@ public class QueryWizard {
                 .distinct()
                 .toList()
                 .forEach(snils ->
-                        addIntPartCondition("snils", snils.replaceAll("-", ""), 11));
+                        addIntPartCondition("snils",
+                                snils.replaceAll("-", ""),
+                                11));
     }
 
-    private void putSexSearchList() {
+    private static void putSexSearchList() {
         predList
                 .stream()
                 .filter(sex ->
@@ -81,7 +84,7 @@ public class QueryWizard {
                         addIntCondition("sex", sex.equals("муж") ? 1 : 2));
     }
 
-    private void putFioSearchList() {
+    private static void putFioSearchList() {
         predList
                 .stream()
                 .filter(fio ->
@@ -94,7 +97,7 @@ public class QueryWizard {
                         addStringCondition("fio", fio));
     }
 
-    private void putBirthDateSearchList() {
+    private static void putBirthDateSearchList() {
         List<String> temp = new ArrayList<>(predList
                 .stream()
                 .filter(dob ->
@@ -109,10 +112,10 @@ public class QueryWizard {
                                 .matcher(dob)
                                 .matches())
                 .toList());
-        temp.forEach(this::addDateCondition);
+        temp.forEach(QueryWizard::addDateCondition);
     }
 
-    private void putAgeSearchList() {
+    private static void putAgeSearchList() {
         predList
                 .stream()
                 .filter(age ->
@@ -121,10 +124,10 @@ public class QueryWizard {
                                 .matches())
                 .distinct()
                 .toList()
-                .forEach(this::addAgeCondition);
+                .forEach(QueryWizard::addAgeCondition);
     }
 
-    private void putPolicySearchList() {
+    private static void putPolicySearchList() {
         // добавить выборку по компании
         predList
                 .stream()
@@ -149,7 +152,7 @@ public class QueryWizard {
                         addIntPartCondition("policy", policy, 20));
     }
 
-    private void putFinSourceSearchList() {
+    private static void putFinSourceSearchList() {
         predList
                 .stream()
                 .filter(fs -> "омс".contains(fs.toLowerCase())
@@ -168,7 +171,7 @@ public class QueryWizard {
     }
 
     // сбор параметров запроса в конечный запрос
-    private void addIntPartCondition(String column, String number, int charLength) {
+    private static void addIntPartCondition(String column, String number, int charLength) {
         query
                 .append("CAST(")
                 .append(column)
@@ -179,7 +182,7 @@ public class QueryWizard {
                 .append("%%' OR ");
     }
 
-    private void addIntCondition(String column, int pred) {
+    private static void addIntCondition(String column, int pred) {
         query
                 .append(column)
                 .append(" = ")
@@ -187,7 +190,7 @@ public class QueryWizard {
                 .append(" OR ");
     }
 
-    private void addStringCondition(String column, String pred) {
+    private static void addStringCondition(String column, String pred) {
         query
                 .append("LOWER(")
                 .append(column)
@@ -196,14 +199,15 @@ public class QueryWizard {
                 .append("%%') OR ");
     }
 
-    private void addAgeCondition(String pred) {
+    private static void addAgeCondition(String pred) {
         query
-                .append("(EXTRACT('year' FROM CURRENT_DATE::timestamp) - EXTRACT('year' FROM birth_date::timestamp)) = ")
+                .append("(EXTRACT('year' FROM CURRENT_DATE::timestamp) - ")
+                .append("EXTRACT('year' FROM birth_date::timestamp)) = ")
                 .append(pred)
                 .append(" OR ");
     }
 
-    private void addDateCondition(String date) {
+    private static void addDateCondition(String date) {
         if (date.length() == 10) {
             date = getDateSQLFormat(date);
         }
@@ -213,7 +217,10 @@ public class QueryWizard {
                 .append("%%' OR ");
     }
 
-    public String getQuery() {
+    public static String query(String queryParams) {
+        flushQuery();
+        flushPredList(queryParams);
+        completeQuery();
         return query.toString();
     }
 }

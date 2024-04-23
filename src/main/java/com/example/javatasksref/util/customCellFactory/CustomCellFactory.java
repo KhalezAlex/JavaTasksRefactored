@@ -24,7 +24,7 @@ public class CustomCellFactory implements Callback<TableColumn<Patient, Object>,
             @Override
             public void updateItem(Object field, boolean empty) {
                 super.updateItem(field, empty);
-                this.setStyle("-fx-alignment: center");
+                getStyleClass().add("base-cell");
                 if (field != null) {
                     setCell(this, field);
                 }
@@ -51,7 +51,7 @@ public class CustomCellFactory implements Callback<TableColumn<Patient, Object>,
         if (tmp.length == 3 && !tmp[1].equals("-") &&
                 cell.getTableRow() != null && cell.getTableRow().getItem() != null) {
             cell.setTooltip(new Tooltip(cell.getTableRow().getItem().getFio()));
-            cell.setStyle("-fx-font-weight: 700; -fx-alignment: center");
+            cell.getStyleClass().add("fio-cell");
         }
     }
 
@@ -76,9 +76,13 @@ public class CustomCellFactory implements Callback<TableColumn<Patient, Object>,
         iv.setPreserveRatio(true);
         graphicContainer.getChildren().add(iv);
         cell.setTooltip(new Tooltip(tooltip));
-        cell.graphicProperty().bind(Bindings.when(cell.emptyProperty()).then((Node) null).otherwise(graphicContainer));
+        cell
+                .graphicProperty()
+                .bind(Bindings
+                        .when(cell.emptyProperty())
+                        .then((Node) null)
+                        .otherwise(graphicContainer));
     }
-
 
     private void colorRowsBySex(TableCell<Patient, Object> cell, Object field) {
         if (cell.getTableRow() != null) {
@@ -90,4 +94,17 @@ public class CustomCellFactory implements Callback<TableColumn<Patient, Object>,
             }
         }
     }
+
+//    private void colorRowsBySex(TableCell<Patient, Object> cell, Object field) {
+//        if (cell.getTableRow() != null) {
+//            if (field.toString().equals("МУЖ")) {
+//                cell.getTableRow().getStyleClass().remove("row-women");
+//                cell.getTableRow().getStyleClass().add("row-men");
+//            }
+//            if (field.toString().equals("ЖЕН")) {
+//                cell.getTableRow().getStyleClass().remove("row-men");
+//                cell.getTableRow().getStyleClass().add("row-women");
+//            }
+//        }
+//    }
 }

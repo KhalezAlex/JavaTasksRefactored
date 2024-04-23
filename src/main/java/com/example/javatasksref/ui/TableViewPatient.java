@@ -1,7 +1,7 @@
 package com.example.javatasksref.ui;
 
-import com.example.javatasksref.db.DbService;
-import com.example.javatasksref.db.DbServiceImplementation;
+import com.example.javatasksref.db.service.PatientService;
+import com.example.javatasksref.db.service.PatientServiceImplementation;
 import com.example.javatasksref.util.customCellFactory.CustomCellFactory;
 import com.example.javatasksref.entity.Patient;
 import javafx.collections.FXCollections;
@@ -11,36 +11,32 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.lang.reflect.Field;
-import java.sql.SQLException;
 import java.util.*;
 
 public class TableViewPatient extends TableView<Patient> {
+    ObservableList<Patient> patients;
 
     public TableViewPatient() throws ClassNotFoundException {
         super();
         this.setMinSize(800, 700);
-        ObservableList<Patient> ol = getOl();
-        this.getColumns().addAll(getColumns(ol));
+        this.patients = getOl();
+        this.getColumns().addAll(getColumns(patients));
         this.setItems(getOl());
         this.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
     }
 
-    public TableViewPatient(ObservableList<Patient> ol) throws ClassNotFoundException {
-        super(ol);
-        this.setMinSize(800, 700);
-        this.getColumns().addAll(getColumns(ol));
-        this.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-    }
-
-    private List<TableColumn<Patient, Object>> getColumns(ObservableList<Patient> ol)
+    private List<TableColumn<Patient, Object>> getColumns(ObservableList<Patient> patients)
             throws ClassNotFoundException {
         Map<String, String> columnNames = columnNames();
-        return new ArrayList<>(Arrays.
-                stream(Class.forName(ol.get(0).getClass().getName()).getDeclaredFields())
+        return Arrays.stream(Class.forName(patients
+                                .get(0)
+                                .getClass()
+                                .getName())
+                        .getDeclaredFields())
                 .map(Field::getName)
-                .filter(fn -> !fn.equals("fio"))
+                .filter(fieldName -> !fieldName.equals("fio"))
                 .map(fn -> getColumnFromField(fn, columnNames.get(fn)))
-                .toList());
+                .toList();
     }
 
     private TableColumn<Patient, Object> getColumnFromField(String prop, String colName) {
@@ -64,11 +60,8 @@ public class TableViewPatient extends TableView<Patient> {
     }
 
     private ObservableList<Patient> getOl() {
-        DbService dbService = new DbServiceImplementation();
-        try {
-            return FXCollections.observableArrayList(dbService.all());
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        PatientService patientService = new PatientServiceImplementation();
+        return FXCollections
+                .observableArrayList(patientService.all());
     }
 }

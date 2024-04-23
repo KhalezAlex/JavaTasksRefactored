@@ -11,31 +11,34 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <javafx-controls.version>17.0.1</javafx-controls.version>
+        <javafx-fxml.version>17.0.1</javafx-fxml.version>
+        <postgresql.version>42.6.0</postgresql.version>
         <jcabi-xml.version>0.29.0</jcabi-xml.version>
         <jtransc.version>0.6.7</jtransc.version>
     </properties>
 
     <dependencies>
+<!--        javafx-->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
-            <version>17.0.1</version>
+            <version>${javafx-controls.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
-            <version>17.0.1</version>
+            <version>${javafx-fxml.version}</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
+<!--        postgresql-->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.6.0</version>
+            <version>${postgresql.version}</version>
         </dependency>
 
-
-        <!-- https://mvnrepository.com/artifact/com.jcabi/jcabi-xml -->
+<!--        jcabi-->
         <dependency>
             <groupId>com.jcabi</groupId>
             <artifactId>jcabi-xml</artifactId>

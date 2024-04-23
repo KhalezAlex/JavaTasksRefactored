@@ -7,10 +7,10 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.control.TextArea?>
 <VBox prefHeight="800" prefWidth="800" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-    fx:controller="com.example.javatasksref.MainViewController">
+    fx:controller="com.example.javatasksref.controller.MainViewController">
     <HBox prefHeight="63.0" prefWidth="568.0">
         <TextArea fx:id="textAreaQuery" prefHeight="30.0" prefWidth="180.0" onKeyPressed="#textAreaQueryKeyPressedHandler"/>
-        <Button fx:id="buttonSearch" mnemonicParsing="false" text="Поиск" onAction="#buttonSearchClickHandler"/>
+        <Button fx:id="buttonSearch" mnemonicParsing="false" text="Поиск" onAction="#searchButtonClickHandler"/>
         <Button fx:id="buttonCancel" mnemonicParsing="false" text="Отмена" onAction="#cancelButtonClickHandler"/>
     </HBox>
     <PaneTable fx:id="paneTable"/>
